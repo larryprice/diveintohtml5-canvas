@@ -12,6 +12,14 @@ function draw_horizontal_lines(c) {
   }
 }
 
+function draw_lines(c) {
+  draw_vertical_lines(c);
+  draw_horizontal_lines(c);
+
+  c.strokeStyle = "#eee";
+  c.stroke();
+}
+
 function draw_arrows(c) {
   c.beginPath();
   draw_horizontal_arrow(c);
@@ -60,11 +68,7 @@ function draw_paths() {
   var c_canvas = document.getElementById("c");
   var context = c_canvas.getContext("2d");
 
-  draw_vertical_lines(context);
-  draw_horizontal_lines(context);
-
-  context.strokeStyle = "#eee";
-  context.stroke();
+  draw_lines(context);
 
   draw_arrows(context);
   draw_text(context);
