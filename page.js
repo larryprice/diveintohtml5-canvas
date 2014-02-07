@@ -41,6 +41,12 @@ function draw_vertical_arrow(context) {
   context.lineTo(55, 370);
 }
 
+function draw_text(c) {
+  c.font = "bold 12px sans-serif";
+  c.fillText("x", 248, 43);
+  c.fillText("y", 58, 165);
+}
+
 function draw_paths() {
   var c_canvas = document.getElementById("c");
   var context = c_canvas.getContext("2d");
@@ -52,6 +58,7 @@ function draw_paths() {
   context.stroke();
 
   draw_arrows(context);
+  draw_text(context);
 }
 
 draw_paths();
