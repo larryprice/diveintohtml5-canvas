@@ -12,8 +12,16 @@ function draw_horizontal_lines(c) {
   }
 }
 
-function draw_horizontal_arrow(c) {
+function draw_arrows(c) {
   c.beginPath();
+  draw_horizontal_arrow(c);
+  draw_vertical_arrow(c);
+
+  c.strokeStyle = "#000";
+  c.stroke();
+}
+
+function draw_horizontal_arrow(c) {
   c.moveTo(0, 40);
   c.lineTo(240, 40);
   c.moveTo(260, 40);
@@ -43,10 +51,7 @@ function draw_paths() {
   context.strokeStyle = "#eee";
   context.stroke();
 
-  draw_horizontal_arrow(context);
-  draw_vertical_arrow(context);
-  context.strokeStyle = "#000";
-  context.stroke();
+  draw_arrows(context);
 }
 
 draw_paths();
