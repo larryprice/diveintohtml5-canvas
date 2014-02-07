@@ -45,6 +45,15 @@ function draw_text(c) {
   c.font = "bold 12px sans-serif";
   c.fillText("x", 248, 43);
   c.fillText("y", 58, 165);
+
+  c.textBaseline = "top";
+  c.fillText("(0 , 0 )", 8, 5);
+  c.fillRect(0, 0, 3, 3);
+
+  c.textAlign = "right";
+  c.textBaseline = "bottom";
+  c.fillText("(500 , 375)", 492, 370);
+  c.fillRect(497, 372, 3, 3);
 }
 
 function draw_paths() {
