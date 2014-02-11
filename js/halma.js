@@ -26,7 +26,7 @@ window.onload = function() {
   gCanvasElement = document.getElementById("halma_canvas");
   gCanvasElement.width = kPixelWidth;
   gCanvasElement.height = kPixelHeight;
-  // gCanvasElement.addEventListener("click", halmaOnClick, false);
+  gCanvasElement.addEventListener("click", halmaOnClick, false);
   gDrawingContext = gCanvasElement.getContext("2d");
 
   gMoveCountElem = document.getElementById("movecount");
@@ -52,14 +52,76 @@ function newGame() {
   drawBoard();
 }
 
+function halmaOnClick(e) {
+  var cell = getCursorPosition(e);
+  for (var i = 0; i < gNumPieces; i++) {
+    if ((gPieces[i].row == cell.row) &&
+        (gPieces[i].column == cell.column)) {
+      clickOnPiece(i);
+      return;
+    }
+  }
+  clickOnEmptyCell(cell);
+}
+
+function getCursorPosition(e) {
+  var x;
+  var y;
+  if (e.pageX != undefined && e.pageY != undefined) {
+    x = e.pageX;
+    y = e.pageY;
+  } else {
+    x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+  }
+
+  x -= gCanvasElement.offsetLeft;
+  y -= gCanvasElement.offsetTop;
+  x = Math.min(x, kBoardWidth * kPieceWidth);
+  y = Math.min(y, kBoardHeight * kPieceHeight);
+  return new Cell(Math.floor(y/kPieceHeight), Math.floor(x/kPieceWidth));
+}
+
+function clickOnPiece(index) {
+  if (gSelectedPieceIndex == index) {
+    gSelectedPieceIndex = -1;
+  } else {
+    gSelectedPieceIndex = index;
+  }
+  gSelectedPieceHasMoved = false;
+  drawBoard();
+}
+
+function clickOnEmptyCell(cell) {
+
+}
+
+function isTheGameOver() {
+  for (var i = 0; i < gNumPieces; i++) {
+    if (gPieces[i].row > 2) {
+        return false;
+    }
+    if (gPieces[i].column < (kBoardWidth - 3)) {
+        return false;
+    }
+  }
+  return true;
+}
+
+function endGame() {
+  gSelectedPieceIndex = -1;
+  gGameInProgress = false;
+  gMoveCountElem.innerHTML = gMoveCount + " - You won!"
+}
+
 function updateMoveCount() {
   gMoveCountElem.innerHTML = gMoveCount;
 }
 
 function drawBoard() {
-  // if (gGameInProgress && isTheGameOver()) {
-  //   endGame();
-  // }
+  if (gGameInProgress && isTheGameOver()) {
+    endGame();
+  }
 
   gDrawingContext.clearRect(0, 0, kPixelWidth, kPixelHeight);
   gDrawingContext.beginPath();
