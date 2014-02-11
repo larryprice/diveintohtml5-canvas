@@ -1,10 +1,14 @@
-<canvas id="e" width="177" height="113"></canvas>
+<canvas id="e" width="500" height="375"></canvas>
 <script>
   var canvas = document.getElementById("e");
   var context = canvas.getContext("2d");
   var cat = new Image();
   cat.src = "img/cat.png";
   cat.onload = function() {
-    context.drawImage(cat, 0, 0);
+    for  (var x = 0, y = 0;
+          x < 500 && y < 375;
+          x += 50, y += 37) {
+      context.drawImage(cat, x, y, 88, 56); // scaled .5
+    }
   };
 </script>
