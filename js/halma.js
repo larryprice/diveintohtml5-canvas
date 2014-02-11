@@ -34,8 +34,8 @@ window.onload = function() {
   newGame();
 };
 
-function newGame() {
-  gPieces = [new Cell(kBoardHeight - 3, 0),
+function startingCells() {
+  return [new Cell(kBoardHeight - 3, 0),
          new Cell(kBoardHeight - 2, 0),
          new Cell(kBoardHeight - 1, 0),
          new Cell(kBoardHeight - 3, 1),
@@ -44,6 +44,22 @@ function newGame() {
          new Cell(kBoardHeight - 3, 2),
          new Cell(kBoardHeight - 2, 2),
          new Cell(kBoardHeight - 1, 2)];
+}
+
+function endingCells() {
+  return [new Cell(0, 8),
+         new Cell(1, 8),
+         new Cell(2, 8),
+         new Cell(0, 7),
+         new Cell(1, 7),
+         new Cell(2, 7),
+         new Cell(0, 6),
+         new Cell(1, 6),
+         new Cell(2, 6)]
+}
+
+function newGame() {
+  gPieces = startingCells();
   gNumPieces = gPieces.length;
   gSelectedPieceIndex = -1;
   gSelectedPieceHasMoved = false;
@@ -53,15 +69,17 @@ function newGame() {
 }
 
 function halmaOnClick(e) {
-  var cell = getCursorPosition(e);
-  for (var i = 0; i < gNumPieces; i++) {
-    if ((gPieces[i].row == cell.row) &&
-        (gPieces[i].column == cell.column)) {
-      clickOnPiece(i);
-      return;
+  if (gGameInProgress) {
+    var cell = getCursorPosition(e);
+    for (var i = 0; i < gNumPieces; i++) {
+      if ((gPieces[i].row == cell.row) &&
+          (gPieces[i].column == cell.column)) {
+        clickOnPiece(i);
+        return;
+      }
     }
+    clickOnEmptyCell(cell);
   }
-  clickOnEmptyCell(cell);
 }
 
 function getCursorPosition(e) {
@@ -93,7 +111,45 @@ function clickOnPiece(index) {
 }
 
 function clickOnEmptyCell(cell) {
+  if (gSelectedPieceIndex == -1) {
+    return;
+  }
 
+  var selectedPiece = gPieces[gSelectedPieceIndex];
+  var rowDiff = Math.abs(cell.row - selectedPiece.row);
+  var colDiff = Math.abs(cell.column - selectedPiece.column);
+  if ((rowDiff <= 1) && (colDiff <= 1)) {
+    selectedPiece.row = cell.row;
+    selectedPiece.column = cell.column;
+    gMoveCount += 1;
+    gSelectedPieceIndex = -1;
+    gSelectedPieceHasMoved = false;
+    drawBoard();
+  } else if ((((rowDiff == 2) && (colDiff == 0)) ||
+              ((rowDiff == 0) && (colDiff == 2)) ||
+              ((rowDiff == 2) && (colDiff == 2))) &&
+             isThereAPieceBetween(selectedPiece, cell)) {
+    if (!gSelectedPieceHasMoved) {
+      gMoveCount += 1;
+    }
+    gSelectedPieceHasMoved = true;
+    selectedPiece.row = cell.row;
+    selectedPiece.column = cell.column;
+    drawBoard();
+  }
+}
+
+function isThereAPieceBetween(cell1, cell2) {
+  var rowBetween = (cell1.row + cell2.row) / 2;
+  var colBetween = (cell1.column + cell2.column) /  2;
+  for (var i = 0; i < gNumPieces; i++) {
+    piece = gPieces[i];
+    if ((piece.row === rowBetween) &&
+        (piece.column === colBetween)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function isTheGameOver() {
@@ -111,11 +167,14 @@ function isTheGameOver() {
 function endGame() {
   gSelectedPieceIndex = -1;
   gGameInProgress = false;
-  gMoveCountElem.innerHTML = gMoveCount + " - You won!"
 }
 
 function updateMoveCount() {
   gMoveCountElem.innerHTML = gMoveCount;
+
+  if (!gGameInProgress) {
+    gMoveCountElem.innerHTML += " - You won!";
+  }
 }
 
 function drawBoard() {
